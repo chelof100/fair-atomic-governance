@@ -40,7 +40,7 @@
 \newcommand{\exec}{\mathrm{exec}}
 
 % ---------- Notation macros (Paper 3 additions) ----------
-\newcommand{\Agents}{\mathcal{A}}          % set of agents
+\newcommand{\Agents}{\mathcal{Ag}}         % set of agents (series: distinct from \mathcal{A}_0 in Paper 2)
 \newcommand{\Actors}{\mathcal{U}}          % set of actors
 \newcommand{\Resources}{\mathcal{R}}       % set of resources
 \newcommand{\Sched}{\mathcal{Q}}           % scheduling queue
@@ -326,6 +326,19 @@ $M = (S, \mathrm{Act}, {\to})$ be an LTS as in Definition~2.1 of
 that work, where $\mathrm{Act} = A_{\mathrm{ag}} \cup A_{\mathrm{env}}$
 is partitioned into agent actions and environment actions.  We now
 make the agent population explicit.
+
+\begin{remark}[Series notation]
+\label{rem:notation-agents}
+This paper uses $\Agents$ for the \emph{agent population set}.
+In Paper~2~\citep{fernandez2026c}, the symbol $\mathcal{A}_0$ denotes
+the \emph{admissible behavior space}---a completely different object
+(a subset of trace sequences, not a set of agents).
+The two objects never appear in the same formula; the subscript~$0$
+unambiguously identifies Paper~2's object wherever both papers are read
+together.  For cross-paper readability, this paper writes $\Agents$
+(rendered $\mathcal{Ag}$) to make the distinction typographically
+explicit.
+\end{remark}
 
 \begin{definition}[Agent Population]
 \label{def:agents}
