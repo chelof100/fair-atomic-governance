@@ -1075,6 +1075,22 @@ M4 WFQ (actor-wt) & $\approx$ & \checkmark & \checkmark & \checkmark \\
 \end{tabular}
 \end{table}
 
+\begin{remark}[Impossibility of $\times$ entries for identity-oblivious mechanisms]
+\label{rem:table-impossibility}
+The $\times$ entries for M1, M2, and M4-uniform in the Actor
+Proportionality and Strategy-Proofness columns are not design
+deficiencies but structural impossibilities.
+Theorem~\ref{thm:sybil}(iii) proves that no identity-oblivious
+$\alloc$ can guarantee $\varepsilon$-actor-level proportionality for
+$\varepsilon < \max_j(m_j/N - 1/M)$.  Since M1, M2, and M4-uniform
+do not use $\owner$, these entries are theorem consequences, not
+engineering gaps.  Theorem~\ref{thm:strategy} further proves that any
+mechanism simultaneously achieving actor-level proportionality and
+strategy-proofness must use $\owner$---which M1, M2, and M4-uniform
+do not---making the $\times$ entry for Strategy-Proofness of those
+mechanisms similarly unavoidable.
+\end{remark}
+
 % ============================================================
 \section{Analysis of Mechanisms}
 \label{sec:analysis}
@@ -1138,6 +1154,55 @@ An additional agent $a_i^{\mathrm{new}}$ under $u_j$ does not increase
 $K_U$ or reduce the cap: $\kappa_{u_j}$ still saturates at $K_U$.
 Hence $\partial \Share{u_j} / \partial m_j = 0$.
 \end{proof}
+
+\begin{proposition}[M3 fails under misrepresented actor mapping]
+\label{prop:pi-misrep}
+Suppose actor $u_j$ controls $m_j$ agents but presents a falsified
+mapping $\tilde{\owner}$ attributing each of its agents to a distinct
+phantom actor: $\tilde{\owner}(a_i) = \tilde{u}_i$ for $m_j$ distinct
+identifiers $\tilde{u}_i \notin \Actors$.  Under M3 applied to
+$\tilde{\owner}$, the aggregate quota available to $u_j$ is
+$m_j \cdot K_U$, restoring full Sybil amplification:
+\[
+  \Share{u_j}(M3,\,\tilde{\owner})
+  \;=\; \frac{m_j}{M}
+  \;\geq\; \frac{m_j}{N}
+  \;\geq\; \frac{1}{M}
+  \quad \text{for } m_j > 1,
+\]
+where the second inequality holds since $M \leq N$.  In particular,
+$\partial\,\Share{u_j}/\partial m_j = 1/M > 0$, violating
+strategy-proofness.
+\end{proposition}
+
+\begin{proof}
+Under $\tilde{\owner}$, M3 treats each agent $a_i \in \Agents_j$ as
+belonging to a distinct actor $\tilde{u}_i$.  Each phantom actor
+receives the full per-actor quota $K_U = \Kcap/M$.  The aggregate
+quota available to $u_j$'s $m_j$ agents under $\tilde{\owner}$ is
+therefore $m_j \cdot K_U = m_j\,\Kcap/M$, giving actor share
+$\Share{u_j} = m_j/M$.  Since $M \leq N$, we have $m_j/M \geq m_j/N$,
+meaning misrepresentation under M3 is \emph{strictly worse} than the
+unmitigated M1 case for any $M < N$: the actor captures more capacity
+per agent than it would under an identity-oblivious mechanism.
+The derivative $\partial(m_j/M)/\partial m_j = 1/M > 0$ violates
+strategy-proofness (Definition~\ref{def:strategy-proof}) even more
+severely than Theorem~\ref{thm:sybil}(i) predicts for M1.
+\end{proof}
+
+\begin{remark}[Observability requirement for actor-aware mechanisms]
+\label{rem:pi-obs}
+Proposition~\ref{prop:pi-misrep} formalizes the assumption implicit
+in M3 and M4 (actor-wt): the actor mapping $\owner$ must be verifiable
+by the allocation mechanism.  Without a trusted identity layer---such
+as a cryptographically signed registration authority or a
+hardware-attestation scheme---actor-aware mechanisms are no stronger
+than identity-oblivious mechanisms in the worst case, and can be
+strictly worse under active misrepresentation (since $m_j/M \geq m_j/N$).
+The design choice between M1/M2 and M3/M4 therefore carries an
+implicit prerequisite: identity observability must be guaranteed at
+the infrastructure level before actor-aware allocation can be deployed.
+\end{remark}
 
 \subsection{Coordination Cost}
 
@@ -1317,41 +1382,180 @@ The \emph{portfolio deviation} for actor $u_j$ is:
 measuring the aggregate allocation skew attributable to $u_j$'s agents.
 \end{definition}
 
-\begin{proposition}[Allocation bias induces IML drift]
-\label{prop:bias-drift}
-If $\Delta_{u_j}(t)$ is monotonically increasing, then the
-admission-time behavioral contract $\mathcal{A}_0$ of agent
-$a_i \in \Agents_j$ is violated in the following sense: the
-action-frequency distribution of $a_i$ diverges from $P_{E_0}$ even
-if all individual actions are admissible.  Specifically, an
-over-served agent issues actions at a rate above its
-admission-time expectation, increasing the IML deviation
-$\widehat{D}(\tau_i, \mathcal{A}_0)$ of \citet{fernandez2026c},
-Theorem~3.
-\end{proposition}
+\begin{theorem}[Allocation bias induces IML drift]
+\label{thm:bias-drift}
+Let $a_i \in \Agents$ be an agent with admission-time snapshot
+$\mathcal{A}_0^{\mathrm{emp}} = (P_{E_0}, \mu_{\mathrm{depth}},
+\sigma_{\mathrm{depth}})$, calibrated during burn-in under fair
+allocation ($B_i = 0$).  Let $P_{\mathrm{excess}}$ denote the
+distribution of tool calls drawn from states visited only because
+of excess allocation, and suppose
+$\mathrm{JS}(P_{\mathrm{excess}} \| P_{E_0}) \geq \eta > 0$.
+If the agent is persistently over-served with $B_i(t) \geq \delta > 0$
+over a window of $T$ steps, let
+$f = \delta\,/\,(\tfrac{1}{N} + \delta)$
+be the fraction of actions attributable to excess allocation.  Then:
+\[
+  \widehat{D}(\tau_i,\,\mathcal{A}_0)
+  \;\geq\; 0.40 \cdot \frac{f^2\,\eta}{2} \;>\; 0.
+\]
+Throughout, the enforcement signal satisfies $g(\tau_i) = 0$, since
+no individual action violates a local constraint.
+\end{theorem}
 
-\begin{proof}[Proof sketch]
-The admission-time snapshot $\mathcal{A}_0^{\mathrm{emp}} = (P_{E_0},
-\mu_{\mathrm{depth}}, \sigma_{\mathrm{depth}})$ of
-\citet{fernandez2026c} is constructed during a burn-in period under
-fair allocation (equal access).  If $a_i$ subsequently receives
-$\Share{i} \gg 1/N$, its empirical action-frequency distribution
-$\hat{P}_{\tau_i}$ will shift toward boundary and risky tools
-(by the same mechanism as the tool-drift scenario of
-\citet{fernandez2026c}, Experiment~1), increasing
-$\mathrm{JS}(\hat{P}_{\tau_i} \| P_{E_0}) > 0$ and thus $\widehat{D}_t
-\nearrow$.  The IML enforcement signal $g(\tau_i) = 0$ throughout,
-since no individual action violates a constraint.
+\begin{proof}
+By linearity of empirical distributions, after $T$ steps the empirical
+tool distribution of $a_i$ decomposes as:
+\[
+  \hat{P}_{\tau_i}
+  \;=\; (1 - f)\,\hat{P}_{\mathrm{base}} \;+\; f\,P_{\mathrm{excess}},
+\]
+where $\hat{P}_{\mathrm{base}}$ converges to $P_{E_0}$ as
+$T \to \infty$ under the bounded-drift Assumption~A1 of
+\citet{fernandez2026c}, since the base fraction of actions is drawn
+from the same distribution as during burn-in.
+By joint convexity of Jensen--Shannon divergence and the inequality
+\[
+  \mathrm{JS}(\lambda P + (1-\lambda)Q \;\|\; P)
+  \;\geq\; \tfrac{\lambda^2}{2}\,\mathrm{JS}(Q \| P),
+  \quad \lambda \in [0,1],
+\]
+applied with $\lambda = f$, $P = \hat{P}_{\mathrm{base}} \approx P_{E_0}$,
+and $Q = P_{\mathrm{excess}}$:
+\[
+  \mathrm{JS}(\hat{P}_{\tau_i} \| P_{E_0})
+  \;\geq\; \frac{f^2}{2}\,\mathrm{JS}(P_{\mathrm{excess}} \| P_{E_0})
+  \;\geq\; \frac{f^2\,\eta}{2}.
+\]
+Since the temporal drift component of \citet{fernandez2026c},
+Definition~4.1, is $D_t(\tau_i) = \mathrm{JS}(\hat{P}_{\tau_i}\|P_{E_0})$,
+and the IML deviation satisfies
+$\widehat{D} = 0.40\,D_t + 0.35\,D_c + 0.25\,D_l \geq 0.40\,D_t$,
+we obtain $\widehat{D} \geq 0.40 \cdot f^2\eta/2 > 0$.
+
+The enforcement signal $g(\tau_i) = 0$ throughout because
+$P_{\mathrm{excess}}$ consists of individually admissible actions
+(each passes the point-wise rule evaluation of Assumption~2.1 of
+\citet{fernandez2026c}).  The IML therefore detects drift while
+enforcement remains silent---an instance of the
+Non-Identifiability regime (Theorem~3.2 of \citet{fernandez2026c})
+triggered structurally by the allocation layer rather than by
+a change in the agent's intrinsic behavior.
 \end{proof}
 
-Proposition~\ref{prop:bias-drift} establishes a bridge between the
+\begin{corollary}[Detection delay amplification under under-service]
+\label{cor:underservice}
+Let $a_i$ receive persistent under-service $B_i(t) \leq -\delta < 0$,
+so its effective execution rate is
+$r = \tfrac{1}{N} - \delta < \tfrac{1}{N}$.
+The IML detection delay for genuine behavioral drift in $a_i$,
+as given by Theorem~3.4 of \citet{fernandez2026c}, satisfies:
+\[
+  T^*_{\mathrm{under}}(\theta)
+  \;\geq\; \frac{T^*_0(\theta)}{1 - \delta N},
+\]
+where $T^*_0(\theta)$ is the detection delay under fair allocation.
+As $\delta \nearrow 1/N$ (complete starvation), $T^*_{\mathrm{under}} \to \infty$.
+\end{corollary}
+
+\begin{proof}
+The detection delay bound
+$T^*_0(\theta) = t_0 + \lceil c_0/(p_1^2\ln(1/\alpha))\rceil$
+of \citet{fernandez2026c} is derived with agent $a_i$ executing at
+rate $\tfrac{1}{N}$ of total capacity, yielding sample count
+$n_0 = T/N$ at time $T$.  Under under-service at rate
+$r = \tfrac{1}{N} - \delta$, the sample count after $T$ steps is
+$n_r = r\,T = (1 - \delta N)\,T/N$.
+Since estimation error $\varepsilon_{\mathrm{est}}(n)$ is
+non-increasing in $n$ (Assumption~A4 of \citet{fernandez2026c}),
+fewer samples inflate the effective detection delay by
+$n_0/n_r = 1/(1 - \delta N)$, giving
+$T^*_{\mathrm{under}} \geq T^*_0/(1 - \delta N)$.
+As $\delta \to 1/N$, the denominator $1 - \delta N \to 0$, so
+$T^*_{\mathrm{under}} \to \infty$: a fully starved agent is
+unmonitorable by IML.
+\end{proof}
+
+Theorem~\ref{thm:bias-drift} establishes a precise bridge between the
 allocation layer and the IML: Sybil amplification that produces
 persistent allocation bias is detectable by the IML as a
 portfolio-level drift signal, even though no individual admission
-decision is incorrect.  Conversely, a well-calibrated allocation
-mechanism prevents the IML from being flooded with allocation-induced
-false positives (agents appearing to drift when they are merely
-over-served).
+decision is incorrect.  Corollary~\ref{cor:underservice} shows the
+dual failure: under-served agents are harder to monitor, as their
+reduced sample count inflates detection delay proportionally.
+A well-calibrated allocation mechanism therefore prevents two distinct
+IML failure modes simultaneously---false positives from over-service
+and detection blindness from under-service.
+
+\subsection{BAR-Monitor Interference under Throttled Allocation}
+\label{sec:bar-interference}
+
+The Boundary Activation Rate (BAR-Monitor) of \citet{fernandez2026b}
+detects deviation collapse by measuring the fraction of admission
+requests that trigger $\Escalate$ or $\Refuse$ decisions at $F$.
+Its invariant presupposes that all requests \emph{reach the boundary}.
+Under actor-aware allocation (M3), requests from quota-exhausted
+actors are intercepted at the allocation layer and never presented to
+$F$---creating a systematic downward bias in BAR that can mimic
+deviation collapse while enforcement remains fully functional.
+
+\begin{proposition}[M3 reduces BAR below its correct baseline]
+\label{prop:bar-m3}
+Let $u_j \in \Actors$ have reached its per-actor quota $K_U =
+\Kcap/M$, so that $\alloc_{\mathrm{AA}}$ drops all subsequent
+requests from agents in $\Agents_j$ before they reach $F$.
+Let $\mathrm{BAR}_N^{(0)}$ denote the Boundary Activation Rate
+under M2 (all agents served), and $\mathrm{BAR}_N^{(\mathrm{M3})}$
+the rate under M3.  Then:
+\[
+  \mathrm{BAR}_N^{(\mathrm{M3})}
+  \;\leq\;
+  \mathrm{BAR}_N^{(0)} \cdot \Bigl(1 - \tfrac{m_j}{N}\Bigr).
+\]
+If $m_j/N > 1 - \theta_{\mathrm{collapse}}/\mathrm{BAR}_N^{(0)}$,
+the BAR-Monitor of \citet{fernandez2026b} enters a false low-activation
+regime even though $F$ is not in deviation collapse.
+\end{proposition}
+
+\begin{proof}
+Under M2, all $N$ agents present requests to $F$ in round-robin order.
+The activation count in window $N$ is
+$A = |\{d_i : d_i \in \{\Escalate, \Refuse\}\}|$, giving
+$\mathrm{BAR}_N^{(0)} = A/N$.
+Under M3 with $u_j$ at quota, the $m_j$ agents of $u_j$ are blocked
+at the allocation layer; only $N - m_j$ agents reach $F$.
+The window of $N$ evaluation slots now contains at most $N - m_j$
+evaluations by $F$ (the $m_j$ throttled slots are never forwarded).
+Since activation events occur only among requests that reach $F$,
+and $F$'s behavior on the remaining $N - m_j$ agents is unchanged:
+\[
+  \mathrm{BAR}_N^{(\mathrm{M3})} = \frac{A'}{N}
+  \;\leq\; \frac{A}{N} \cdot \frac{N - m_j}{N}
+  = \mathrm{BAR}_N^{(0)} \cdot \Bigl(1 - \tfrac{m_j}{N}\Bigr).
+\]
+If this falls below $\theta_{\mathrm{collapse}}$, the BAR-Monitor
+issues a deviation collapse alert (low-activation regime,
+Definition~4.6 of \citet{fernandez2026b}).  Yet $F$ retains full
+enforcement capacity: were the throttled requests forwarded, $F$
+would correctly ESCALATE or REFUSE them.  The alert is a false positive
+caused by allocation-layer throttling, not enforcement failure.
+\end{proof}
+
+\begin{remark}[Corrected activation rate]
+\label{rem:bar-correction}
+A BAR-Monitor co-deployed with an actor-aware allocation layer must
+normalize by requests \emph{presented to $F$}, not by total requests
+submitted.  The corrected rate
+\[
+  \mathrm{BAR}_N^{\mathrm{corr}}
+  \;=\;
+  \frac{|\{d_i : d_i \in \{\Escalate, \Refuse\}\}|}
+       {|\{r_i : r_i\text{ reached }F\}|}
+\]
+is independent of which allocation mechanism throttles upstream,
+recovering the invariant $\mathrm{BAR}_N^{\mathrm{corr}} =
+\mathrm{BAR}_N^{(0)}$ regardless of $m_j$ or quota state.
+\end{remark}
 
 \subsection{The Four-Layer Governance Architecture}
 \label{sec:four-layers}
@@ -1625,19 +1829,22 @@ system-wide distributional fairness.
 \subsection{Limitations and Future Work}
 \label{sec:limitations}
 
-Several important questions are left for future work.  First, we assume
+Two important questions are left for future work.  First, we assume
 a fixed agent population; dynamic arrival and departure of agents
 introduces challenges for actor-aware mechanisms (how to reallocate
-$K_U$ when actors join or leave).  Second, the actor mapping $\owner$
-is assumed known to the mechanism in M3 and M4(actor-wt); in practice,
-$\owner$ may be unobservable or strategically misrepresented.  Third,
-we analyze worst-case fairness; a stochastic model of request arrivals
-would permit average-case analysis and tighter detection-delay bounds
-for the allocation bias signal of \S\ref{sec:alloc-bias}.  Finally, the
-interaction between the allocation layer and ACP's Boundary Activation
-Rate (BAR-Monitor)~\citep{fernandez2026b} deserves formal treatment:
-M3 may reduce BAR by concentrating enforcement events on under-served
-agents, which BAR could misinterpret as deviation collapse.
+$K_U$ when actors join or leave) that are outside the scope of the
+present LTS model.  Second, we analyze worst-case fairness; a
+stochastic model of request arrivals would permit average-case
+analysis and tighter bounds on the detection-delay amplification of
+Corollary~\ref{cor:underservice}.
+
+The two questions previously listed as open---the interaction between
+M3 and ACP's BAR-Monitor, and the formal treatment of misrepresented
+actor mappings---have been resolved in
+\S\ref{sec:bar-interference} (Proposition~\ref{prop:bar-m3} and
+Remark~\ref{rem:bar-correction}) and in the M3 analysis
+(Proposition~\ref{prop:pi-misrep} and Remark~\ref{rem:pi-obs}),
+respectively.
 
 % ============================================================
 \section{Conclusion}
