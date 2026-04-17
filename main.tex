@@ -1,17 +1,46 @@
 \documentclass[11pt]{article}
 
+% --- Encoding & fonts (matches ACP) ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\setlength{\emergencystretch}{3em}
+
+% --- Page geometry ---
+\usepackage[margin=1in, top=1.1in, bottom=1.1in]{geometry}
+
+% --- Math ---
 \usepackage{amsmath,amssymb,amsthm}
-\usepackage[margin=1in]{geometry}
-\usepackage{hyperref}
+
+% --- Tables & figures ---
 \usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+
+% --- Hyperlinks (matches ACP: colorlinks, no boxes) ---
+\usepackage[colorlinks=true,
+            linkcolor=blue!70!black,
+            urlcolor=blue!70!black,
+            citecolor=blue!70!black]{hyperref}
+
+% --- Misc ---
 \usepackage{xcolor}
 \usepackage{enumitem}
-\usepackage[protrusion=true,expansion=false]{microtype}
-\setlength{\emergencystretch}{3em}   % allow extra stretch before declaring overfull
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, positioning, fit, backgrounds, patterns,
                 decorations.pathreplacing, calc}
+
+% --- Section formatting (matches ACP) ---
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% --- Paragraph spacing (matches ACP) ---
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
 
 % ---------- Theorem environments ----------
 \theoremstyle{plain}
@@ -59,7 +88,7 @@ under Shared Resource Constraints in Multi-Agent Systems}
 TraslaIA\\
 \texttt{info@traslaia.com}}
 
-\date{April 2026 \quad (Draft)}
+\date{April 2026}
 
 \begin{document}
 \maketitle
@@ -735,18 +764,28 @@ or network latency---not to differences in admissibility.
 \begin{table}[h]
 \centering
 \caption{Failure modes and the fairness properties they violate.
-  A checkmark indicates the mode is consistent with the property;
-  a cross indicates violation.}
+  $\checkmark$ = the failure mode does \emph{not} violate the property
+  (consistent); $\times$ = direct violation.
+  Note: Strategy-Proofness (Definition~\ref{def:strategy-proof})
+  concerns identity fragmentation specifically.
+  Temporal domination and resource contention exploit timing and
+  volume, not agent splitting---hence they are consistent with
+  strategy-proofness as defined, but may still degrade overall
+  fairness through the other dimensions.}
 \label{tab:failuremodes}
 \begin{tabular}{lccc}
 \toprule
 \textbf{Failure Mode} & \textbf{Share Fair} & \textbf{Actor Prop.} &
-  \textbf{Strategy-Proof} \\
+  \textbf{Strategy-Proof}$^*$ \\
 \midrule
 Sybil amplification     & \checkmark & $\times$ & $\times$ \\
 Temporal domination     & $\times$   & $\times$ & \checkmark \\
 Resource contention     & $\times$   & $\times$ & \checkmark \\
 \bottomrule
+\multicolumn{4}{l}{\footnotesize $^*$ Strategy-Proofness is defined against
+  identity fragmentation (Def.~\ref{def:strategy-proof}); \checkmark}\\
+\multicolumn{4}{l}{\footnotesize \quad here means the mode does not exploit
+  agent splitting, not that the mechanism is immune to the mode.}
 \end{tabular}
 \end{table}
 
@@ -1194,7 +1233,9 @@ belonging to a distinct actor $\tilde{u}_i$.  Each phantom actor
 receives the full per-actor quota $K_U = \Kcap/M$.  The aggregate
 quota available to $u_j$'s $m_j$ agents under $\tilde{\owner}$ is
 therefore $m_j \cdot K_U = m_j\,\Kcap/M$, giving actor share
-$\Share{u_j} = m_j/M$.  Since $M \leq N$, we have $m_j/M \geq m_j/N$,
+$\Share{u_j} = m_j/M$.  Since there are at most as many actors as
+agents ($M \leq N$), we have $1/M \geq 1/N$, and multiplying both
+sides by $m_j > 0$ yields $m_j/M \geq m_j/N$;  thus
 meaning misrepresentation under M3 is \emph{strictly worse} than the
 unmitigated M1 case for any $M < N$: the actor captures more capacity
 per agent than it would under an identity-oblivious mechanism.
@@ -1462,7 +1503,7 @@ Let $a_i$ receive persistent under-service $B_i(t) \leq -\delta < 0$,
 so its effective execution rate is
 $r = \tfrac{1}{N} - \delta < \tfrac{1}{N}$.
 The IML detection delay for genuine behavioral drift in $a_i$,
-as given by Theorem~3.4 of \citet{fernandez2026c}, satisfies:
+as given by Theorem~3.6 of \citet{fernandez2026c}, satisfies:
 \[
   T^*_{\mathrm{under}}(\theta)
   \;\geq\; \frac{T^*_0(\theta)}{1 - \delta N},
@@ -1584,7 +1625,7 @@ and cross-agent allocation skew (Paper~3).
 \centering
 \begin{tikzpicture}[
   every node/.style={font=\small},
-  box/.style={draw, rounded corners=3pt, minimum width=8.4cm,
+  box/.style={draw, rounded corners=3pt, minimum width=8.4cm, text width=7.8cm,
               minimum height=0.75cm, align=center},
   lbl/.style={font=\footnotesize\bfseries, anchor=west},
   qst/.style={font=\scriptsize, anchor=east, text=gray!70!black},
@@ -1664,6 +1705,96 @@ as given.  This layered dependency is not circular but
 \emph{compositional}: each paper in the series contributes a component
 that is necessary but not sufficient alone, and the quartet is closed
 exactly when all four components are present.
+
+% ============================================================
+\section{Empirical Validation}
+\label{sec:experiments}
+% ============================================================
+
+We validate the main results with three controlled experiments using a
+purpose-built harness that implements M1, M2, and M3 directly from their
+formal definitions (Section~\ref{sec:mechanisms}).  All experiments use
+an adversarial Sybil scenario: two honest actors each controlling two
+agents, and one adversarial actor controlling a variable number of Sybil
+agents.  Results are averaged over 10 independent seeds; full code and
+CSVs are included in the supplementary material.
+
+\subsection{Exp A: Actor Share Distribution (M1 vs.\ M2 vs.\ M3)}
+\label{sec:exp-a}
+
+We run 500 steps with 8 Sybil agents (total agents: 4 honest + 8 Sybil)
+and compare the final actor shares under each mechanism.
+Figure~\ref{fig:share-dist} shows the results.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.82\columnwidth]{experiments/figures/fig1_share_distribution}
+\caption{Actor share distribution.  M1 and M2 are identity-oblivious:
+  with 8 Sybil agents the adversary captures $0.667$ of all allocations
+  ($2\times$ the fair share $1/3$).  M3 bounds the adversary to exactly
+  $0.333 = 1/M$ in \emph{every} seed.}
+\label{fig:share-dist}
+\end{figure}
+
+\noindent
+M1 and M2 both yield adversary share $= 0.667$ (zero variance across all
+10 seeds), confirming Theorem~\ref{thm:sybil}: per-agent bounded
+enforcement scales linearly with agent count when the allocator is
+identity-oblivious.  M3 yields adversary share $= 0.333 \pm 0.000$,
+matching the theoretical bound $K_U/K_\mathrm{cap} = 1/M$ of
+Proposition~\ref{prop:m3}.
+
+\subsection{Exp B: Sybil Amplification Curve}
+\label{sec:exp-b}
+
+We vary the number of Sybil agents from 1 to 16 and measure the adversary's
+share under each mechanism (Figure~\ref{fig:sybil-amp}).
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.82\columnwidth]{experiments/figures/fig2_sybil_amplification}
+\caption{Sybil amplification (Theorem~\ref{thm:sybil}).  Under M1 and M2
+  the adversary share grows from $0.20$ (1 Sybil agent) to $0.80$
+  (16 agents), tracking $n_s/(n_s+4)$.  Under M3 the share stays flat
+  at $0.333$ regardless of $n_s$.}
+\label{fig:sybil-amp}
+\end{figure}
+
+\noindent
+Under M1 and M2 the adversary share follows the linear amplification
+$n_s/(n_s + n_h)$ predicted by Theorem~\ref{thm:sybil}
+(with $n_h = 4$ honest agents, the formula gives
+$1/(1+4)=0.20$, $8/(8+4)=0.667$, $16/(16+4)=0.80$,
+matching the observed values exactly).  Under M3, the share is flat at
+$0.333$ for all $n_s \in \{1,\ldots,16\}$, with maximum deviation
+$0.0002$ from the ideal $1/3$.
+
+\subsection{Exp C: Strategy-Proofness}
+\label{sec:exp-c}
+
+We compare the marginal gain from registering additional Sybil agents under
+M1 (not strategy-proof) and M3 (strategy-proof), to validate
+Proposition~\ref{prop:m3} empirically (Figure~\ref{fig:sp}).
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.92\columnwidth]{experiments/figures/fig3_strategy_proofness}
+\caption{Strategy-proofness.  \emph{Left}: adversary share vs.\ Sybil
+  count.  \emph{Right}: marginal gain above fair share ($1/3$).  Under M3
+  the gain is $\approx 0$ for all Sybil counts (max $0.0002$); under M1
+  the gain grows linearly to $+0.46$ at 16 agents.}
+\label{fig:sp}
+\end{figure}
+
+\noindent
+Under M3, the gain above fair share is zero ($\le 0.0002$) regardless of
+how many Sybil agents the adversary registers, confirming
+strategy-proofness: no actor can increase its allocation by fragmenting
+its identity.  Under M1, the gain grows from $-0.133$ (1 agent, below
+fair) to $+0.459$ (16 agents), establishing that M1 is not
+strategy-proof.  Together, Experiments A--C provide empirical support for
+Theorems~\ref{thm:sybil} and~\ref{thm:necessity} and
+Proposition~\ref{prop:m3}.
 
 % ============================================================
 \section{Discussion and Related Work}

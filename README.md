@@ -63,11 +63,15 @@ S_{u_j} = m_j / N
 
 where m_j = |A_j| is the number of agents controlled by actor u_j. Registering additional agents increases actor share linearly: ∂S_{u_j}/∂m_j = 1/N > 0. No identity-oblivious mechanism can guarantee ε-actor-level proportionality for ε < max_j |m_j/N − 1/M|.
 
-### Theorem 5.2 — Allocation Necessity
+### Corollary 5.2 — Linear scaling of actor capacity
+
+Under per-agent bounded enforcement, the adversary's share scales as `m_j/N` with the number of registered agents. The maximum deviation from fair share is `max_j |m_j/N − 1/M|`.
+
+### Theorem 5.3 — Allocation Necessity
 
 There exists a multi-agent system in which F satisfies the atomic decision boundary property (every admitted action is atomically correct) and the trivial FCFS allocation function, such that actor-level proportionality fails with maximum deviation |S_{u_j} − 1/M| = 1/2. Atomic correctness does not imply fair allocation; an explicit allocation layer is a necessary additional component.
 
-### Theorem 5.3 — Strategy-Proofness Impossibility
+### Theorem 5.4 — Strategy-Proofness Impossibility
 
 Under per-agent independent enforcement, no allocation mechanism can simultaneously achieve:
 - (i) ε-actor-level proportionality, and  
@@ -122,6 +126,7 @@ The layers are non-redundant: correctness at Layer k does not imply correctness 
 | **Paper 1** | Agent Control Protocol (ACP) | [acp-framework-en](https://github.com/chelof100/acp-framework-en) | [Published — arXiv:2603.18829](https://arxiv.org/abs/2603.18829) |
 | **Paper 2** | From Admission to Invariants (IML) | [iml-benchmark](https://github.com/chelof100/iml-benchmark) | In preparation |
 | **Paper 3** | Fair Atomic Governance (this repo) | [fair-atomic-governance](https://github.com/chelof100/fair-atomic-governance) | In preparation |
+| **Paper 4** | Irreducible Multi-Scale Governance | [compositional-governance](https://github.com/chelof100/compositional-governance) | In preparation |
 
 **Series logic:**
 - Paper 0 proves *when* admissibility can be guaranteed (structural necessity of atomic boundaries).

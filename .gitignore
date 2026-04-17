@@ -1,21 +1,40 @@
-# LaTeX auxiliary files
+# LaTeX build artifacts
 *.aux
 *.bbl
 *.blg
-*.fdb_latexmk
-*.fls
-*.lof
 *.log
-*.lot
 *.out
-*.synctex.gz
 *.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
 *.nav
 *.snm
-*.vrb
 
-# Editors
-*.swp
-*~
+# Compiled PDFs (keep main.pdf, exclude drafts)
+*-draft.pdf
+*v[0-9]*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# Results (generated, not tracked)
+experiments/results/*.csv
+experiments/results/*.json
+
+# OS
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# PDFs de documentos complementarios
+Documentos complementarios/
+
+# Remove main PDF from tracking
+main.pdf
+*.pdf
