@@ -23,9 +23,8 @@ __pycache__/
 venv/
 .venv/
 
-# Results (generated, not tracked)
-experiments/results/*.csv
-experiments/results/*.json
+# Experiments (generated, not tracked)
+experiments/
 
 # OS
 .DS_Store

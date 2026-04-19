@@ -12,7 +12,7 @@
 **Fair Atomic Governance: Allocating Decision Boundaries under Shared Resource Constraints in Multi-Agent Systems**  
 Marcelo Fernandez (TraslaIA), 2026
 
-DOI: [TBD — Zenodo] &nbsp;·&nbsp; arXiv: [TBD]
+DOI: [10.5281/zenodo.19643928](https://doi.org/10.5281/zenodo.19643928) &nbsp;·&nbsp; arXiv: [TBD]
 
 ---
 
@@ -122,11 +122,11 @@ The layers are non-redundant: correctness at Layer k does not imply correctness 
 
 | Paper | Title | Repo | Status |
 |---|---|---|---|
-| **Paper 0** | Atomic Decision Boundaries | [decision-boundary-model](https://github.com/chelof100/decision-boundary-model) | In preparation |
-| **Paper 1** | Agent Control Protocol (ACP) | [acp-framework-en](https://github.com/chelof100/acp-framework-en) | [Published — arXiv:2603.18829](https://arxiv.org/abs/2603.18829) |
-| **Paper 2** | From Admission to Invariants (IML) | [iml-benchmark](https://github.com/chelof100/iml-benchmark) | In preparation |
-| **Paper 3** | Fair Atomic Governance (this repo) | [fair-atomic-governance](https://github.com/chelof100/fair-atomic-governance) | In preparation |
-| **Paper 4** | Irreducible Multi-Scale Governance | [compositional-governance](https://github.com/chelof100/compositional-governance) | In preparation |
+| **Paper 0** | Atomic Decision Boundaries | [decision-boundary-model](https://github.com/chelof100/decision-boundary-model) | [Published — Zenodo](https://doi.org/10.5281/zenodo.19642166) · arXiv: TBD |
+| **Paper 1** | Agent Control Protocol (ACP) | [acp-framework-en](https://github.com/chelof100/acp-framework-en) | [Published — arXiv:2603.18829](https://arxiv.org/abs/2603.18829) · [Zenodo](https://doi.org/10.5281/zenodo.19642405) |
+| **Paper 2** | From Admission to Invariants (IML) | [iml-benchmark](https://github.com/chelof100/iml-benchmark) | [Published — Zenodo](https://doi.org/10.5281/zenodo.19643761) · arXiv: TBD |
+| **Paper 3** | Fair Atomic Governance (this repo) | [fair-atomic-governance](https://github.com/chelof100/fair-atomic-governance) | [Published — Zenodo](https://doi.org/10.5281/zenodo.19643928) · arXiv: TBD |
+| **Paper 4** | Irreducible Multi-Scale Governance | [compositional-governance](https://github.com/chelof100/compositional-governance) | [Published — Zenodo](https://doi.org/10.5281/zenodo.19643950) · arXiv: TBD |
 
 **Series logic:**
 - Paper 0 proves *when* admissibility can be guaranteed (structural necessity of atomic boundaries).
@@ -144,8 +144,8 @@ The layers are non-redundant: correctness at Layer k does not imply correctness 
              Shared Resource Constraints in Multi-Agent Systems},
   author  = {Fernandez, Marcelo},
   year    = {2026},
-  note    = {arXiv: [TBD]. DOI: [TBD]. Paper~3 of the Agent Governance Series.
-             Source: https://github.com/chelof100/fair-atomic-governance}
+  doi     = {10.5281/zenodo.19643928},
+  note    = {Zenodo: https://doi.org/10.5281/zenodo.19643928. arXiv: TBD. Paper~3 of the Agent Governance Series.}
 }
 ```
 
