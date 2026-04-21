@@ -134,11 +134,12 @@ with the $\Escalate$ outcome and with the Invariant Measurement Layer,
 showing that allocation bias induces a form of behavioral drift detectable
 above the enforcement boundary.
 
-This paper is Paper~3 of a 4-paper Agent Governance Series:
+This paper is Paper~3 of a 6-paper Agent Governance Series:
 atomic decision boundaries (P0,~\citet{fernandez2026a}),
 stateful enforcement---ACP (P1,~\citet{fernandez2026b}),
 behavioral drift detection---IML (P2,~\citet{fernandez2026c}),
-and composition irreducibility (P4,~\citet{fernandez2026comp}).
+composition irreducibility (P4,~\citet{fernandez2026comp}),
+and runtime execution validity---RAM (P5,~\citet{fernandez2026ram}).
 \end{abstract}
 
 \tableofcontents
@@ -315,16 +316,16 @@ the consequences of different choices.
     (\S\ref{sec:interaction}).
 \end{enumerate}
 
-\paragraph{Position in the quartet.}
-This paper is Paper~3 in a series of four.  Paper~0~\citep{fernandez2026a}
+\paragraph{Position in the series.}
+This paper is Paper~3 in a series of six.  Paper~0~\citep{fernandez2026a}
 establishes the structural necessity of atomic decision boundaries.
 Paper~1~\citep{fernandez2026b} (ACP) instantiates those boundaries as a
 concrete protocol.  Paper~2~\citep{fernandez2026c} (IML) monitors
-behavioral drift above the boundary.  The present paper closes the
-quartet by addressing the allocation layer: given a correctly functioning
-atomic boundary and a behavioral invariant monitor, how should the
-governance infrastructure be shared among competing agents so that no
-actor can disproportionately capture the system's execution capacity?
+behavioral drift above the boundary.  The present paper addresses the
+allocation layer: given a correctly functioning atomic boundary and a
+behavioral invariant monitor, how should the governance infrastructure
+be shared among competing agents so that no actor can disproportionately
+capture the system's execution capacity?
 The four layers together define a complete governance architecture: what
 is admissible (Papers~0--1), how far behavior has drifted from
 admission-time contracts (Paper~2), and how admissible actions are
@@ -1615,12 +1616,16 @@ recovering the invariant $\mathrm{BAR}_N^{\mathrm{corr}} =
 \subsection{The Four-Layer Governance Architecture}
 \label{sec:four-layers}
 
-The four papers in this series define four distinct, non-redundant
-layers of governance.  Figure~\ref{fig:fourlayer} depicts their
-relationship.  Each layer addresses a failure mode invisible to the
-layer below it: enforcement-time state changes (Paper~0), per-action
-admissibility (Paper~1), within-compliance behavioral drift (Paper~2),
-and cross-agent allocation skew (Paper~3).
+Papers~0--3 define four distinct, non-redundant layers of governance.
+Figure~\ref{fig:fourlayer} depicts their relationship.  Each layer
+addresses a failure mode invisible to the layer below it:
+enforcement-time state changes (Paper~0), per-action admissibility
+(Paper~1), within-compliance behavioral drift (Paper~2), and
+cross-agent allocation skew (Paper~3).
+Paper~4~\citep{fernandez2026comp} proves this four-layer architecture
+is irreducible.  Paper~5~\citep{fernandez2026ram} closes the series by
+providing the runtime operational mechanism for execution validity under
+partial observability.
 
 \begin{figure}[t]
 \centering
@@ -1704,8 +1709,8 @@ Crucially, each layer \emph{assumes} the layer below it is functioning:
 IML takes atomicity as given; the allocation layer takes ACP enforcement
 as given.  This layered dependency is not circular but
 \emph{compositional}: each paper in the series contributes a component
-that is necessary but not sufficient alone, and the quartet is closed
-exactly when all four components are present.
+that is necessary but not sufficient alone, and the series is complete
+exactly when all six components are present.
 
 % ============================================================
 \section{Empirical Validation}
@@ -1925,16 +1930,16 @@ These three departures---correctness constraints, temporal dynamics, and
 strategic identity control---define the specific contribution of the
 present work relative to fair-division theory.
 
-\subsection{Position within the Governance Quartet}
+\subsection{Position within the Agent Governance Series}
 \label{sec:related-quartet}
 
-The four papers in this series form a logically closed architecture;
+The six papers in this series form a logically closed architecture;
 Table~\ref{tab:quartet} summarizes each paper's question, result, and
 the failure mode it addresses.
 
 \begin{table}[h]
 \centering
-\caption{The governance quartet: question, result, and failure mode addressed.}
+\caption{The Agent Governance Series: question, result, and failure mode addressed.}
 \label{tab:quartet}
 \small
 \begin{tabular}{lp{3.2cm}p{3.6cm}p{3.0cm}}
@@ -2054,17 +2059,23 @@ actor mapping.  Deployers of multi-agent governance infrastructure
 must choose based on whether $\owner$ is observable and whether
 identity fragmentation is a realistic threat in their environment.
 
-This paper closes the governance quartet.  Paper~0~\citep{fernandez2026a}
-establishes that admissibility can only be guaranteed by atomic
-enforcement: the decision boundary is a structural necessity, not an
-engineering choice.  Paper~1~\citep{fernandez2026b} instantiates the
-boundary as ACP and demonstrates its correctness properties across
-thousands of states.  Paper~2~\citep{fernandez2026c} shows that
-enforcement-correct behavior can still drift from admission-time
-contracts, and introduces IML to detect this drift.  The present paper
-shows that a drift-monitored, atomically correct system can still
-allocate its governance capacity unfairly---and provides the formal
-tools to characterize, prevent, and detect this failure.
+This paper completes the fairness layer of the Agent Governance Series.
+Paper~0~\citep{fernandez2026a} establishes that admissibility can only
+be guaranteed by atomic enforcement: the decision boundary is a
+structural necessity, not an engineering choice.
+Paper~1~\citep{fernandez2026b} instantiates the boundary as ACP and
+demonstrates its correctness properties across thousands of states.
+Paper~2~\citep{fernandez2026c} shows that enforcement-correct behavior
+can still drift from admission-time contracts, and introduces IML to
+detect this drift.  The present paper shows that a drift-monitored,
+atomically correct system can still allocate its governance capacity
+unfairly---and provides the formal tools to characterize, prevent, and
+detect this failure.  Paper~4~\citep{fernandez2026comp} proves the
+irreducibility of the resulting four-layer architecture.
+Paper~5~\citep{fernandez2026ram} closes the series with the
+Reconstructive Authority Model: the runtime mechanism that determines
+whether execution authority can be constructed from the current real
+state, operationalizing the observability limits proved by Paper~2.
 
 \begin{quote}
 \textit{Admission control determines what can happen.

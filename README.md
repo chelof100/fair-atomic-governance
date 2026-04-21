@@ -2,7 +2,7 @@
 
 **Paper 3 of the Agent Governance Series.**
 
-> *Admission control determines what can happen. Fairness determines who gets to act.*
+> *Admission control determines what can happen. Fairness determines who gets to act.*  
 > *Correctness is local. Fairness is global.*
 
 ---
@@ -12,7 +12,7 @@
 **Fair Atomic Governance: Allocating Decision Boundaries under Shared Resource Constraints in Multi-Agent Systems**  
 Marcelo Fernandez (TraslaIA), 2026
 
-DOI: [10.5281/zenodo.19643928](https://doi.org/10.5281/zenodo.19643928) &nbsp;·&nbsp; arXiv: [TBD]
+DOI: [10.5281/zenodo.19672597](https://doi.org/10.5281/zenodo.19672597) &nbsp;·&nbsp; arXiv: under review
 
 ---
 
@@ -31,7 +31,8 @@ The paper introduces:
 **Paper 0 (DBM):** https://github.com/chelof100/decision-boundary-model  
 **Paper 1 (ACP):** https://github.com/chelof100/acp-framework-en  
 **Paper 2 (IML):** https://github.com/chelof100/iml-benchmark  
-**arXiv (ACP):** https://arxiv.org/abs/2603.18829
+**Paper 4 (Compositional):** https://github.com/chelof100/compositional-governance  
+**Paper 5 (RAM):** https://github.com/chelof100/reconstructive-authority-model
 
 ---
 
@@ -39,15 +40,15 @@ The paper introduces:
 
 ```
 fair-atomic-governance/
-├── main.tex          # Full LaTeX source (1 732 lines)
-├── references.bib    # Bibliography (14 entries)
-├── main.pdf          # Compiled paper (20 pages)
+├── main.tex          # Full LaTeX source
+├── references.bib    # Bibliography
+├── main.pdf          # Compiled paper (27 pages)
 ├── README.md
 ├── LICENSE
 └── .gitignore
 ```
 
-This is a theory paper. There is no code or benchmark; the contribution is entirely formal.
+This is a theory paper with formal experiments. The contribution is entirely formal.
 
 ---
 
@@ -62,10 +63,6 @@ S_{u_j} = m_j / N
 ```
 
 where m_j = |A_j| is the number of agents controlled by actor u_j. Registering additional agents increases actor share linearly: ∂S_{u_j}/∂m_j = 1/N > 0. No identity-oblivious mechanism can guarantee ε-actor-level proportionality for ε < max_j |m_j/N − 1/M|.
-
-### Corollary 5.2 — Linear scaling of actor capacity
-
-Under per-agent bounded enforcement, the adversary's share scales as `m_j/N` with the number of registered agents. The maximum deviation from fair share is `max_j |m_j/N − 1/M|`.
 
 ### Theorem 5.3 — Allocation Necessity
 
@@ -96,25 +93,25 @@ Any actor-aware mechanism that achieves both must aggregate state across agents 
 
 ---
 
-## The four-layer governance architecture
+## The governance architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│  Layer 4 — Allocation          [Paper 3, this repo] │  Who gets to act?
-│  Fair scheduling across agents                      │
-├─────────────────────────────────────────────────────┤
-│  Layer 3 — IML                 [Paper 2, iml-bench] │  Has behavior drifted?
-│  Behavioral drift within g⁻¹(0)                    │
-├─────────────────────────────────────────────────────┤
-│  Layer 2 — ACP                 [Paper 1, acp-en]    │  Is this action admissible?
-│  Stateful per-action admission control              │
-├─────────────────────────────────────────────────────┤
-│  Layer 1 — Atomic Boundary     [Paper 0, dbm]       │  Can guarantees be made?
-│  Decision + transition as a single LTS step         │
-└─────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│  L5 — RAM               [Paper 5, RAM]               │  When to execute under partial observability?
+├──────────────────────────────────────────────────────┤
+│  L3 — Allocation        [Paper 3, this repo]         │  Who gets to act?
+│  Fair scheduling across agents                       │
+├──────────────────────────────────────────────────────┤
+│  L2 — IML               [Paper 2, iml-benchmark]    │  Has behavior drifted?
+│  Behavioral drift within g⁻¹(0)                     │
+├──────────────────────────────────────────────────────┤
+│  L1 — ACP               [Paper 1, acp-framework-en] │  Is this action admissible?
+│  Stateful per-action admission control               │
+├──────────────────────────────────────────────────────┤
+│  L0 — Atomic Boundary   [Paper 0, decision-boundary] │  Can guarantees be made?
+│  Decision + transition as a single LTS step          │
+└──────────────────────────────────────────────────────┘
 ```
-
-The layers are non-redundant: correctness at Layer k does not imply correctness at Layer k+1.
 
 ---
 
@@ -122,17 +119,20 @@ The layers are non-redundant: correctness at Layer k does not imply correctness 
 
 | Paper | Title | Repo | Status |
 |---|---|---|---|
-| **Paper 0** | Atomic Decision Boundaries | [decision-boundary-model](https://github.com/chelof100/decision-boundary-model) | [Published — Zenodo](https://doi.org/10.5281/zenodo.19642166) · arXiv: TBD |
-| **Paper 1** | Agent Control Protocol (ACP) | [acp-framework-en](https://github.com/chelof100/acp-framework-en) | [Published — arXiv:2603.18829](https://arxiv.org/abs/2603.18829) · [Zenodo](https://doi.org/10.5281/zenodo.19642405) |
-| **Paper 2** | From Admission to Invariants (IML) | [iml-benchmark](https://github.com/chelof100/iml-benchmark) | [Published — Zenodo](https://doi.org/10.5281/zenodo.19643761) · arXiv: TBD |
-| **Paper 3** | Fair Atomic Governance (this repo) | [fair-atomic-governance](https://github.com/chelof100/fair-atomic-governance) | [Published — Zenodo](https://doi.org/10.5281/zenodo.19643928) · arXiv: TBD |
-| **Paper 4** | Irreducible Multi-Scale Governance | [compositional-governance](https://github.com/chelof100/compositional-governance) | [Published — Zenodo](https://doi.org/10.5281/zenodo.19643950) · arXiv: TBD |
+| **Paper 0** | Atomic Decision Boundaries | [decision-boundary-model](https://github.com/chelof100/decision-boundary-model) | [Zenodo](https://doi.org/10.5281/zenodo.19670649) · [arXiv:2604.17511](https://arxiv.org/abs/2604.17511) |
+| **Paper 1** | Agent Control Protocol (ACP) | [acp-framework-en](https://github.com/chelof100/acp-framework-en) | [Zenodo](https://doi.org/10.5281/zenodo.19672575) · [arXiv:2603.18829](https://arxiv.org/abs/2603.18829) |
+| **Paper 2** | From Admission to Invariants (IML) | [iml-benchmark](https://github.com/chelof100/iml-benchmark) | [Zenodo](https://doi.org/10.5281/zenodo.19672589) · [arXiv:2604.17517](https://arxiv.org/abs/2604.17517) |
+| **Paper 3** | Fair Atomic Governance (this repo) | [fair-atomic-governance](https://github.com/chelof100/fair-atomic-governance) | [Zenodo](https://doi.org/10.5281/zenodo.19672597) · arXiv: under review |
+| **Paper 4** | Irreducible Multi-Scale Governance | [compositional-governance](https://github.com/chelof100/compositional-governance) | [Zenodo](https://doi.org/10.5281/zenodo.19672608) · arXiv: under review |
+| **Paper 5** | Reconstructive Authority Model (RAM) | [reconstructive-authority-model](https://github.com/chelof100/reconstructive-authority-model) | [Zenodo](https://doi.org/10.5281/zenodo.19669430) · arXiv: under review |
 
 **Series logic:**
 - Paper 0 proves *when* admissibility can be guaranteed (structural necessity of atomic boundaries).
 - Paper 1 builds a protocol that satisfies that condition (ACP, with TLA+ verification).
 - Paper 2 operates above the boundary to detect behavioral drift invisible to enforcement.
-- Paper 3 proves that correct enforcement does not imply fair allocation, and characterizes the allocation layer.
+- Paper 3 proves that correct enforcement does not imply fair allocation, and characterizes the allocation layer (this paper).
+- Paper 4 composes all layers and proves their joint necessity (irreducibility).
+- Paper 5 provides the operational closure: given partial observability, determines when execution is valid at runtime (RAM).
 
 ---
 
@@ -140,12 +140,13 @@ The layers are non-redundant: correctness at Layer k does not imply correctness 
 
 ```bibtex
 @misc{fernandez2026fair,
-  title   = {Fair Atomic Governance: Allocating Decision Boundaries under
-             Shared Resource Constraints in Multi-Agent Systems},
-  author  = {Fernandez, Marcelo},
-  year    = {2026},
-  doi     = {10.5281/zenodo.19643928},
-  note    = {Zenodo: https://doi.org/10.5281/zenodo.19643928. arXiv: TBD. Paper~3 of the Agent Governance Series.}
+  title        = {Fair Atomic Governance: Allocating Decision Boundaries under
+                 Shared Resource Constraints in Multi-Agent Systems},
+  author       = {Fernandez, Marcelo},
+  year         = {2026},
+  doi          = {10.5281/zenodo.19672597},
+  howpublished = {\url{https://doi.org/10.5281/zenodo.19672597}},
+  note         = {Paper~3 of the Agent Governance Series. Zenodo. arXiv: under review.}
 }
 ```
 
